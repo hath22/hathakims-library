@@ -216,8 +216,9 @@ function cardHTML(item) {
       ${item.genre ? `<div class="card-genre">${escHtml(item.genre)}</div>` : ''}
       ${item.rating ? `<div class="card-rating" style="color:${ratingColor(item.rating)}"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1l1.4 2.8L11 4.3l-2.5 2.4.6 3.4L6 8.5l-3.1 1.6.6-3.4L1 4.3l3.6-.5z" fill="${ratingColor(item.rating)}"/></svg>${item.rating.toFixed(1)}</div>` : ''}
     </div>
-    <div class="card-actions" onclick="event.stopPropagation()">
-      <button class="card-btn details-btn" onclick="openDetail(${item.id})">Details</button>
+    <div class="card-details-hint">
+      <span class="details-text">Details</span>
+      <span class="details-plus">+</span>
     </div>
   </div>`;
 }

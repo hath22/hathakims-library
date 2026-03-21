@@ -305,6 +305,7 @@ main {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0,0,0,.5);
   border-color: #3a3a50;
+  border-color: #3a3a50;
 }
 
 .card-poster {
@@ -417,12 +418,6 @@ main {
 }
 .card-rating svg { flex-shrink: 0; }
 
-.card-actions {
-  display: flex;
-  gap: 4px;
-  padding: 0 12px 12px;
-}
-
 .card-btn {
   flex: 1;
   background: var(--surface2);
@@ -440,12 +435,33 @@ main {
 }
 .card-btn:hover { color: var(--text); border-color: #3a3a50; }
 
-.details-btn {
-  font-size: 0.78rem;
-  padding: 7px;
-  letter-spacing: 0.02em;
+/* ── Details hint ────────────────────────────────────────── */
+.card-details-hint {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  padding: 8px 12px 12px;
 }
-.details-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.details-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.details-plus {
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.35s ease, color 0.2s;
+}
+
+.card:hover .details-text { color: var(--text); }
+.card:hover .details-plus  { color: var(--text); transform: rotate(90deg); }
 
 /* ── Card heart indicator (passive) ──────────────────────── */
 .card-heart-indicator {
