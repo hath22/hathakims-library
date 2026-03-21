@@ -148,7 +148,7 @@ async function initApp() {
 
 initApp();
 
-// ── Arwen fireworks ───────────────────────────────────────────────────────
+// ── Arwen heart animation ─────────────────────────────────────────────────
 function fireArwenCelebration() {
   const W = window.innerWidth, H = window.innerHeight;
   const canvas = document.createElement('canvas');
@@ -157,78 +157,44 @@ function fireArwenCelebration() {
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  const COLORS = ['#f43f5e','#f59e0b','#22c55e','#7C3AED','#3b82f6','#ec4899','#06b6d4','#fbbf24','#a78bfa','#fb7185','#ffffff','#ff6b6b'];
+  const PINKS = ['#ff69b4','#ff1493','#ec4899','#f472b6','#fb7185','#ff80ab','#fda4af'];
 
-  const particles = [];
+  // 60 hearts burst from centre, spread outward with an upward bias
+  const hearts = Array.from({ length: 60 }, () => {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2 + Math.random() * 9;
+    return {
+      x: W / 2 + (Math.random() - 0.5) * 40,
+      y: H / 2 + (Math.random() - 0.5) * 40,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2.5,
+      size: 14 + Math.random() * 26,
+      color: PINKS[Math.floor(Math.random() * PINKS.length)],
+      opacity: 0.95,
+    };
+  });
 
-  function burst(x, y) {
-    const count = 180;
-    for (let i = 0; i < count; i++) {
-      const angle  = (i / count) * Math.PI * 2;
-      const speed  = 4 + Math.random() * 12;
-      const isRect = Math.random() < 0.5;
-      particles.push({
-        x, y,
-        vx: Math.cos(angle) * speed * (0.7 + Math.random() * 0.6),
-        vy: Math.sin(angle) * speed * (0.7 + Math.random() * 0.6) - 3,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        opacity: 1,
-        rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.2,
-        isRect,
-        w: isRect ? 8 + Math.random() * 12 : 0,
-        h: isRect ? 5 + Math.random() * 8  : 0,
-        r: isRect ? 0 : 4 + Math.random() * 6,
-      });
-    }
-  }
-
-  // Single burst in the centre of the screen
-  const bursts = [{ delay: 0, x: W / 2, y: H * 0.35, fired: false }];
-
-  let startTime = null;
-
-  function animate(ts) {
-    if (!startTime) startTime = ts;
-    const elapsed = ts - startTime;
-
+  function animate() {
     ctx.clearRect(0, 0, W, H);
-
-    bursts.forEach(b => {
-      if (!b.fired && elapsed >= b.delay) {
-        b.fired = true;
-        burst(b.x, b.y);
-      }
-    });
-
     let alive = false;
-    particles.forEach(p => {
-      if (p.opacity <= 0) return;
-      p.vy       += 0.18;
-      p.vx       *= 0.97;
-      p.x        += p.vx;
-      p.y        += p.vy;
-      p.rotation += p.rotSpeed;
-      p.opacity  -= 0.008;
-      if (p.opacity <= 0) return;
+    hearts.forEach(h => {
+      h.x  += h.vx;
+      h.y  += h.vy;
+      h.vy += 0.12;          // gentle gravity
+      h.vx *= 0.99;
+      h.opacity -= 0.018;    // ~1 s at 60 fps
+      if (h.opacity <= 0) return;
       alive = true;
       ctx.save();
-      ctx.globalAlpha = Math.max(0, p.opacity);
-      ctx.fillStyle   = p.color;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      if (p.isRect) {
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-      } else {
-        ctx.beginPath();
-        ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      ctx.globalAlpha = h.opacity;
+      ctx.fillStyle   = h.color;
+      ctx.font        = `${h.size}px serif`;
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('♥', h.x, h.y);
       ctx.restore();
     });
-
-    const allBurstsFired = bursts.every(b => b.fired);
-    if (!allBurstsFired || alive) requestAnimationFrame(animate);
+    if (alive) requestAnimationFrame(animate);
     else canvas.remove();
   }
 
