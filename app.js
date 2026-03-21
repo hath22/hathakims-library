@@ -153,42 +153,42 @@ function fireArwenCelebration() {
   const W = window.innerWidth, H = window.innerHeight;
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;';
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  const COLORS = ['#f43f5e','#f59e0b','#22c55e','#7C3AED','#3b82f6','#ec4899','#06b6d4','#fbbf24','#a78bfa','#fb7185','#ffffff'];
+  const COLORS = ['#f43f5e','#f59e0b','#22c55e','#7C3AED','#3b82f6','#ec4899','#06b6d4','#fbbf24','#a78bfa','#fb7185','#ffffff','#ff6b6b'];
 
   const particles = [];
 
-  function burst(x, y, color) {
-    const count = 120;
+  function burst(x, y) {
+    const count = 180;
     for (let i = 0; i < count; i++) {
-      const angle   = (i / count) * Math.PI * 2 + Math.random() * 0.3;
-      const speed   = 3 + Math.random() * 9;
-      const isRect  = Math.random() < 0.5;
+      const angle  = (i / count) * Math.PI * 2;
+      const speed  = 4 + Math.random() * 12;
+      const isRect = Math.random() < 0.5;
       particles.push({
         x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2,
-        color: Math.random() < 0.5 ? color : COLORS[Math.floor(Math.random() * COLORS.length)],
+        vx: Math.cos(angle) * speed * (0.7 + Math.random() * 0.6),
+        vy: Math.sin(angle) * speed * (0.7 + Math.random() * 0.6) - 3,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
         opacity: 1,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.25,
+        rotSpeed: (Math.random() - 0.5) * 0.2,
         isRect,
-        w: isRect ? 6 + Math.random() * 10 : 0,
-        h: isRect ? 4 + Math.random() * 6  : 0,
-        r: isRect ? 0 : 3 + Math.random() * 4,
+        w: isRect ? 8 + Math.random() * 12 : 0,
+        h: isRect ? 5 + Math.random() * 8  : 0,
+        r: isRect ? 0 : 4 + Math.random() * 6,
       });
     }
   }
 
-  // Schedule 8 bursts across the screen
-  const bursts = Array.from({ length: 8 }, (_, i) => ({
-    delay: i * 350 + Math.random() * 150,
+  // 10 bursts starting immediately, spread across screen
+  const burstTimes = [0, 200, 400, 600, 800, 1000, 1300, 1600, 1900, 2300];
+  const bursts = burstTimes.map(delay => ({
+    delay,
     x: W * 0.1 + Math.random() * W * 0.8,
-    y: H * 0.1 + Math.random() * H * 0.5,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    y: H * 0.05 + Math.random() * H * 0.55,
     fired: false,
   }));
 
@@ -200,27 +200,26 @@ function fireArwenCelebration() {
 
     ctx.clearRect(0, 0, W, H);
 
-    // Fire scheduled bursts
     bursts.forEach(b => {
       if (!b.fired && elapsed >= b.delay) {
         b.fired = true;
-        burst(b.x, b.y, b.color);
+        burst(b.x, b.y);
       }
     });
 
-    // Update & draw particles
     let alive = false;
     particles.forEach(p => {
-      p.vy       += 0.15;
+      if (p.opacity <= 0) return;
+      p.vy       += 0.18;
       p.vx       *= 0.97;
       p.x        += p.vx;
       p.y        += p.vy;
       p.rotation += p.rotSpeed;
-      p.opacity  -= 0.013;
+      p.opacity  -= 0.008;
       if (p.opacity <= 0) return;
       alive = true;
       ctx.save();
-      ctx.globalAlpha = p.opacity;
+      ctx.globalAlpha = Math.max(0, p.opacity);
       ctx.fillStyle   = p.color;
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rotation);
