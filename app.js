@@ -183,14 +183,8 @@ function fireArwenCelebration() {
     }
   }
 
-  // 10 bursts starting immediately, spread across screen
-  const burstTimes = [0, 200, 400, 600, 800, 1000, 1300, 1600, 1900, 2300];
-  const bursts = burstTimes.map(delay => ({
-    delay,
-    x: W * 0.1 + Math.random() * W * 0.8,
-    y: H * 0.05 + Math.random() * H * 0.55,
-    fired: false,
-  }));
+  // Single burst in the centre of the screen
+  const bursts = [{ delay: 0, x: W / 2, y: H * 0.35, fired: false }];
 
   let startTime = null;
 
