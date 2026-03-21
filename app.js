@@ -204,9 +204,7 @@ function cardHTML(item) {
       ${poster}
       ${activeType === 'movie' || activeType === 'tv' || activeType === 'arwen' ? '' : `<span class="type-badge">${item.type === 'tv' ? 'TV' : item.type === 'arwen' ? 'Arwen' : 'Movie'}</span>`}
       ${langFlag(item.language)}
-      <button class="heart-btn${item.hearted ? ' hearted' : ''}" onclick="event.stopPropagation(); toggleHeart(${item.id})" title="${item.hearted ? 'Remove from favourites' : 'Add to favourites'}">
-        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 21C12 21 3 14 3 8.5A5 5 0 0 1 12 6a5 5 0 0 1 9 2.5C21 14 12 21 12 21z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" ${item.hearted ? 'fill="currentColor"' : 'fill="none"'}/></svg>
-      </button>
+      ${item.hearted ? `<span class="card-heart-indicator" title="Favourite">♥</span>` : ''}
     </div>
     <div class="card-body">
       <div class="card-title">${escHtml(item.title)}</div>
@@ -218,15 +216,8 @@ function cardHTML(item) {
       ${item.genre ? `<div class="card-genre">${escHtml(item.genre)}</div>` : ''}
       ${item.rating ? `<div class="card-rating" style="color:${ratingColor(item.rating)}"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1l1.4 2.8L11 4.3l-2.5 2.4.6 3.4L6 8.5l-3.1 1.6.6-3.4L1 4.3l3.6-.5z" fill="${ratingColor(item.rating)}"/></svg>${item.rating.toFixed(1)}</div>` : ''}
     </div>
-    <div class="card-watched" onclick="event.stopPropagation()">
-      <label class="watched-label">
-        <input type="checkbox" class="watched-check" ${item.status === 'watched' ? 'checked' : ''} onchange="toggleWatched(${item.id}, this.checked)">
-        <span>Watched</span>
-      </label>
-    </div>
     <div class="card-actions" onclick="event.stopPropagation()">
-      <button class="card-btn" onclick="openEdit(${item.id})" title="Edit">✏ Edit</button>
-      <button class="card-btn list-add-btn${lists.some(l => l.itemIds.includes(item.id)) ? ' in-list' : ''}" onclick="toggleListPopover(event,${item.id})" title="Add to list">☰</button>
+      <button class="card-btn details-btn" onclick="openDetail(${item.id})">Details</button>
     </div>
   </div>`;
 }
@@ -371,6 +362,11 @@ function resetFilters() {
 
 // ── Detail modal ──────────────────────────────────────────────────────────
 function openDetail(id) {
+  renderDetailContent(id);
+  document.getElementById('detailModal').style.display = 'flex';
+}
+
+function renderDetailContent(id) {
   const item = library.find(i => i.id === id);
   if (!item) return;
 
@@ -378,7 +374,14 @@ function openDetail(id) {
     ? `<img src="${escHtml(item.poster)}" alt="${escHtml(item.title)}" style="width:100%;height:100%;object-fit:cover">`
     : `<div class="detail-poster-placeholder" style="background:${getGradient(item.id)};width:100%;height:100%">${TYPE_ICON[item.type] || '🎬'}</div>`;
 
-  const statusClass = { watched: 'badge-watched', watching: 'badge-watching', want: 'badge-want' }[item.status] || '';
+  const isWatched = item.status === 'watched';
+  const isHearted = !!item.hearted;
+
+  const listsHTML = lists.length ? lists.map(l => `
+    <label class="detail-list-item">
+      <input type="checkbox" ${l.itemIds.includes(id) ? 'checked' : ''} onchange="toggleItemInList(${l.id},${id},this.checked)">
+      <span>${escHtml(l.name)}</span>
+    </label>`).join('') : `<span class="detail-no-lists">No lists yet</span>`;
 
   document.getElementById('detailContent').innerHTML = `
     <div class="detail-layout">
@@ -389,20 +392,51 @@ function openDetail(id) {
           <span class="badge ${item.type === 'arwen' ? 'badge-arwen' : 'badge-type'}">${item.type === 'tv' ? 'TV Show' : item.type === 'arwen' ? 'Arwen' : 'Movie'}</span>
         </div>
         <div class="detail-meta">
-          ${item.year     ? `<div class="detail-meta-item"><label>Year</label><span>${item.year}</span></div>` : ''}
-          ${item.rating   ? `<div class="detail-meta-item"><label>Rating</label><span>${renderStars(item.rating)} ${item.rating.toFixed(1)}</span></div>` : ''}
-          ${item.creator  ? `<div class="detail-meta-item"><label>${item.type === 'tv' || item.type === 'arwen' ? 'Creator' : 'Director'}</label><span>${escHtml(item.creator)}</span></div>` : ''}
-          ${item.genre    ? `<div class="detail-meta-item"><label>Genre</label><span>${escHtml(item.genre)}</span></div>` : ''}
+          ${item.year    ? `<div class="detail-meta-item"><label>Year</label><span>${item.year}</span></div>` : ''}
+          ${item.runtime ? `<div class="detail-meta-item"><label>Runtime</label><span>${item.runtime} min</span></div>` : ''}
+          ${item.rating  ? `<div class="detail-meta-item"><label>IMDB</label><span style="color:${ratingColor(item.rating)}">${item.rating.toFixed(1)}</span></div>` : ''}
+          ${item.creator ? `<div class="detail-meta-item"><label>${item.type === 'tv' || item.type === 'arwen' ? 'Creator' : 'Director'}</label><span>${escHtml(item.creator)}</span></div>` : ''}
+          ${item.genre   ? `<div class="detail-meta-item"><label>Genre</label><span>${escHtml(item.genre)}</span></div>` : ''}
         </div>
         ${item.notes ? `<div class="detail-notes">"${escHtml(item.notes)}"</div>` : ''}
-        <div class="detail-actions">
-          <button class="btn-primary" onclick="closeDetail();openEdit(${item.id})">✏ Edit</button>
-          <button class="btn-secondary" onclick="closeDetail();deleteItem(${item.id})">Delete</button>
+
+        <div class="detail-action-row">
+          <button class="detail-action-btn${isWatched ? ' active' : ''}" onclick="detailToggleWatched(${id})">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="${isWatched ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M5 10l4 4 6-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ${isWatched ? 'Watched' : 'Mark Watched'}
+          </button>
+          <button class="detail-action-btn${isHearted ? ' hearted' : ''}" onclick="detailToggleHeart(${id})">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="${isHearted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21C12 21 3 14 3 8.5A5 5 0 0 1 12 6a5 5 0 0 1 9 2.5C21 14 12 21 12 21z"/></svg>
+            ${isHearted ? 'Favourited' : 'Favourite'}
+          </button>
+          <button class="detail-action-btn" onclick="closeDetail();openEdit(${id})">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13.5V16h2.5l7-7-2.5-2.5-7 7zM14.5 5.5l-2.5 2.5 2.5 2.5 2.5-2.5-2.5-2.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Edit
+          </button>
+        </div>
+
+        <div class="detail-lists-section">
+          <div class="detail-lists-label">Add to list</div>
+          <div class="detail-lists-items">${listsHTML}</div>
+        </div>
+
+        <div class="detail-danger">
+          <button class="btn-secondary btn-danger" onclick="closeDetail();deleteItem(${id})">Delete</button>
         </div>
       </div>
     </div>`;
+}
 
-  document.getElementById('detailModal').style.display = 'flex';
+function detailToggleWatched(id) {
+  const item = library.find(i => i.id === id);
+  if (!item) return;
+  closeDetail();
+  toggleWatched(id, item.status !== 'watched');
+}
+
+function detailToggleHeart(id) {
+  toggleHeart(id);
+  renderDetailContent(id); // refresh detail in place
 }
 
 function closeDetail() {

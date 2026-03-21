@@ -440,6 +440,24 @@ main {
 }
 .card-btn:hover { color: var(--text); border-color: #3a3a50; }
 
+.details-btn {
+  font-size: 0.78rem;
+  padding: 7px;
+  letter-spacing: 0.02em;
+}
+.details-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── Card heart indicator (passive) ──────────────────────── */
+.card-heart-indicator {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  z-index: 3;
+  font-size: 14px;
+  color: #f43f5e;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+
 /* ── Watched divider ─────────────────────────────────────── */
 .watched-divider {
   grid-column: 1 / -1;
@@ -466,29 +484,6 @@ main {
   white-space: nowrap;
 }
 
-/* ── Heart button ────────────────────────────────────────── */
-.heart-btn {
-  position: absolute;
-  bottom: 8px; right: 8px;
-  z-index: 3;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.5);
-  border: none; border-radius: 50%;
-  color: rgba(255,255,255,0.4);
-  cursor: pointer;
-  transition: color 0.2s, background 0.2s, transform 0.15s;
-}
-.heart-btn:hover {
-  color: #f43f5e;
-  background: rgba(0,0,0,0.7);
-  transform: scale(1.15);
-}
-.heart-btn.hearted {
-  color: #f43f5e;
-  background: rgba(244,63,94,0.18);
-}
-.heart-btn.hearted:hover { transform: scale(1.15); }
 
 .card--hearted {
   box-shadow: 0 0 0 2px rgba(244,63,94,0.45), 0 4px 20px rgba(244,63,94,0.15);
@@ -523,50 +518,6 @@ main {
   opacity: 0.8;
 }
 
-.card-watched {
-  padding: 0 12px 8px;
-}
-
-.watched-label {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  color: var(--muted);
-  user-select: none;
-  width: fit-content;
-}
-.watched-label:hover { color: var(--text); }
-
-.watched-check {
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border: 1.5px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface2);
-  cursor: pointer;
-  position: relative;
-  flex-shrink: 0;
-  transition: all .15s;
-}
-.watched-check:checked {
-  background: var(--watched);
-  border-color: var(--watched);
-}
-.watched-check:checked::after {
-  content: '';
-  position: absolute;
-  left: 3px;
-  top: 1px;
-  width: 5px;
-  height: 8px;
-  border: 2px solid #fff;
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
 .card-btn:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ── Empty state ─────────────────────────────────────────── */
@@ -810,10 +761,78 @@ main {
   font-style: italic;
 }
 
-.detail-actions {
+/* ── Detail modal actions ────────────────────────────────── */
+.detail-action-row {
   display: flex;
   gap: 8px;
   margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.detail-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.detail-action-btn:hover { color: var(--text); border-color: #3a3a50; }
+.detail-action-btn.active {
+  background: rgba(34,197,94,0.12);
+  border-color: var(--watched);
+  color: var(--watched);
+}
+.detail-action-btn.hearted {
+  background: rgba(244,63,94,0.12);
+  border-color: #f43f5e;
+  color: #f43f5e;
+}
+
+.detail-lists-section {
+  margin-top: 20px;
+}
+.detail-lists-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.detail-lists-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detail-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  color: var(--text-dim);
+}
+.detail-list-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px; height: 15px;
+  cursor: pointer;
+}
+.detail-no-lists {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.detail-danger {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 /* ── Stars ───────────────────────────────────────────────── */
