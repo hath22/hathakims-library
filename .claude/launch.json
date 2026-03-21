@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "media-library",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "3501", "--directory", "/Users/leighhathaway/Projects/media-library"],
+      "port": 3501
+    }
+  ]
+}
