@@ -264,7 +264,7 @@ function updateStats() {
 }
 
 // ── Main render ───────────────────────────────────────────────────────────
-function render() {
+function render(animateCards = false) {
   updatePageTitle();
   buildGenreFilter();
 
@@ -317,6 +317,13 @@ function render() {
     }
 
     grid.innerHTML = html;
+
+    if (animateCards) {
+      grid.querySelectorAll('.card').forEach((card, i) => {
+        card.style.animationDelay = `${i * 30}ms`;
+        card.classList.add('card--entering');
+      });
+    }
   }
 
   updateStats();
@@ -462,9 +469,20 @@ document.getElementById('addForm').addEventListener('submit', e => {
 function toggleWatched(id, checked) {
   const idx = library.findIndex(i => i.id === id);
   if (idx === -1) return;
-  library[idx].status = checked ? 'watched' : 'want';
-  save();
-  render();
+
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  const doUpdate = () => {
+    library[idx].status = checked ? 'watched' : 'want';
+    save();
+    render(true); // true = animate cards in
+  };
+
+  if (card) {
+    card.classList.add('card--exiting');
+    setTimeout(doUpdate, 320);
+  } else {
+    doUpdate();
+  }
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────
