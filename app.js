@@ -199,11 +199,14 @@ function cardHTML(item) {
     : `<div class="card-poster-placeholder" style="background:${getGradient(item.id)}"><span class="poster-icon">${TYPE_ICON[item.type] || '🎬'}</span><span>${escHtml(item.title)}</span></div>`;
 
   return `
-  <div class="card${item.status === 'watched' ? ' card--watched' : ''}" data-id="${item.id}" onclick="openDetail(${item.id})">
+  <div class="card${item.status === 'watched' ? ' card--watched' : ''}${item.hearted ? ' card--hearted' : ''}" data-id="${item.id}" onclick="openDetail(${item.id})">
     <div class="card-poster">
       ${poster}
       ${activeType === 'movie' || activeType === 'tv' || activeType === 'arwen' ? '' : `<span class="type-badge">${item.type === 'tv' ? 'TV' : item.type === 'arwen' ? 'Arwen' : 'Movie'}</span>`}
       ${langFlag(item.language)}
+      <button class="heart-btn${item.hearted ? ' hearted' : ''}" onclick="event.stopPropagation(); toggleHeart(${item.id})" title="${item.hearted ? 'Remove from favourites' : 'Add to favourites'}">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 21C12 21 3 14 3 8.5A5 5 0 0 1 12 6a5 5 0 0 1 9 2.5C21 14 12 21 12 21z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" ${item.hearted ? 'fill="currentColor"' : 'fill="none"'}/></svg>
+      </button>
     </div>
     <div class="card-body">
       <div class="card-title">${escHtml(item.title)}</div>
@@ -482,6 +485,26 @@ function toggleWatched(id, checked) {
     setTimeout(doUpdate, 320);
   } else {
     doUpdate();
+  }
+}
+
+// ── Heart ─────────────────────────────────────────────────────────────────
+function toggleHeart(id) {
+  const idx = library.findIndex(i => i.id === id);
+  if (idx === -1) return;
+  library[idx].hearted = !library[idx].hearted;
+  save();
+  // Update card in place — no full re-render needed
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) {
+    const hearted = library[idx].hearted;
+    card.classList.toggle('card--hearted', hearted);
+    const btn = card.querySelector('.heart-btn');
+    if (btn) {
+      btn.classList.toggle('hearted', hearted);
+      btn.title = hearted ? 'Remove from favourites' : 'Add to favourites';
+      btn.querySelector('path').setAttribute('fill', hearted ? 'currentColor' : 'none');
+    }
   }
 }
 

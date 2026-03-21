@@ -466,6 +466,37 @@ main {
   white-space: nowrap;
 }
 
+/* ── Heart button ────────────────────────────────────────── */
+.heart-btn {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  z-index: 3;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5);
+  border: none; border-radius: 50%;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, transform 0.15s;
+}
+.heart-btn:hover {
+  color: #f43f5e;
+  background: rgba(0,0,0,0.7);
+  transform: scale(1.15);
+}
+.heart-btn.hearted {
+  color: #f43f5e;
+  background: rgba(244,63,94,0.18);
+}
+.heart-btn.hearted:hover { transform: scale(1.15); }
+
+.card--hearted {
+  box-shadow: 0 0 0 2px rgba(244,63,94,0.45), 0 4px 20px rgba(244,63,94,0.15);
+}
+.card--hearted.card--watched {
+  box-shadow: 0 0 0 2px rgba(244,63,94,0.3);
+}
+
 /* ── Watched state ───────────────────────────────────────── */
 .card--watched {
   opacity: 0.45;
