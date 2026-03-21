@@ -12,6 +12,26 @@ async function fetchOMDB(title, type) {
   } catch { return null; }
 }
 
+async function fetchOMDBSearch(title, type) {
+  const t = type === 'tv' ? 'series' : type === 'arwen' ? '' : 'movie';
+  const typeParam = t ? `&type=${t}` : '';
+  const url = `https://www.omdbapi.com/?apikey=${OMDB_KEY}&s=${encodeURIComponent(title)}${typeParam}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.Response === 'True' ? data.Search : null;
+  } catch { return null; }
+}
+
+async function fetchOMDBById(imdbId) {
+  const url = `https://www.omdbapi.com/?apikey=${OMDB_KEY}&i=${imdbId}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.Response === 'True' ? data : null;
+  } catch { return null; }
+}
+
 function omdbToFields(data) {
   const n = v => v && v !== 'N/A' ? v : null;
   // OMDB year can be "2008–2013" for series — take first 4 digits
@@ -385,6 +405,7 @@ function openModal(item = null) {
   form.reset();
   const status = document.getElementById('imdbStatus');
   if (status) { status.textContent = ''; status.className = 'imdb-status'; }
+  closeIMDBPicker();
   const fetchBtn = document.getElementById('fetchIMDB');
   if (fetchBtn) fetchBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Fetch from IMDB`;
   document.getElementById('editId').value    = item ? item.id : '';
@@ -777,18 +798,44 @@ document.getElementById('fetchIMDB').addEventListener('click', async () => {
   btn.textContent = 'Fetching…';
   status.textContent = '';
 
+  const FETCH_BTN_HTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Fetch from IMDB`;
   const type = document.getElementById('f-type').value;
-  const data = await fetchOMDB(title, type);
+  closeIMDBPicker();
+
+  const results = await fetchOMDBSearch(title, type);
 
   btn.disabled = false;
-  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Fetch from IMDB`;
+  btn.innerHTML = FETCH_BTN_HTML;
 
-  if (!data) {
+  if (!results || results.length === 0) {
     status.textContent = '✕ Not found';
     status.className = 'imdb-status error';
     return;
   }
 
+  if (results.length === 1) {
+    await fillFromIMDBId(results[0].imdbID, status);
+    return;
+  }
+
+  // Multiple matches — show picker
+  status.textContent = `${results.length} matches found — pick one below`;
+  status.className = 'imdb-status';
+  showIMDBPicker(results, async imdbId => {
+    btn.disabled = true;
+    status.textContent = 'Loading…';
+    await fillFromIMDBId(imdbId, status);
+    btn.disabled = false;
+  });
+});
+
+async function fillFromIMDBId(imdbId, statusEl) {
+  const data = await fetchOMDBById(imdbId);
+  if (!data) {
+    statusEl.textContent = '✕ Could not load details';
+    statusEl.className = 'imdb-status error';
+    return;
+  }
   const fields = omdbToFields(data);
   if (fields.title)   document.getElementById('f-title').value   = fields.title;
   if (fields.year)    document.getElementById('f-year').value    = fields.year;
@@ -797,10 +844,32 @@ document.getElementById('fetchIMDB').addEventListener('click', async () => {
   if (fields.creator) document.getElementById('f-creator').value = fields.creator;
   if (fields.poster)  document.getElementById('f-poster').value  = fields.poster;
   if (fields.type)    document.getElementById('f-type').value    = fields.type;
+  statusEl.textContent = '✓ Filled from IMDB';
+  statusEl.className = 'imdb-status success';
+}
 
-  status.textContent = '✓ Filled from IMDB';
-  status.className = 'imdb-status success';
-});
+function showIMDBPicker(results, onSelect) {
+  closeIMDBPicker();
+  const picker = document.createElement('div');
+  picker.id = 'imdbPicker';
+  picker.className = 'imdb-picker';
+  picker.innerHTML = results.slice(0, 8).map(r => `
+    <button type="button" class="imdb-picker-item" data-id="${escHtml(r.imdbID)}">
+      <img class="imdb-picker-poster" src="${r.Poster !== 'N/A' ? escHtml(r.Poster) : ''}" onerror="this.src=''" alt="">
+      <div class="imdb-picker-info">
+        <span class="imdb-picker-title">${escHtml(r.Title)}</span>
+        <span class="imdb-picker-meta">${r.Year} · ${r.Type === 'series' ? 'TV' : 'Movie'}</span>
+      </div>
+    </button>`).join('');
+  picker.querySelectorAll('.imdb-picker-item').forEach(btn => {
+    btn.addEventListener('click', () => { closeIMDBPicker(); onSelect(btn.dataset.id); });
+  });
+  document.querySelector('.imdb-fetch-row').insertAdjacentElement('afterend', picker);
+}
+
+function closeIMDBPicker() {
+  document.getElementById('imdbPicker')?.remove();
+}
 
 // ── OMDB: Refresh a single card ───────────────────────────────────────────
 async function refreshCardIMDB(id) {
