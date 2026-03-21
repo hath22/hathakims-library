@@ -383,6 +383,10 @@ function closeDetail() {
 function openModal(item = null) {
   const form = document.getElementById('addForm');
   form.reset();
+  const status = document.getElementById('imdbStatus');
+  if (status) { status.textContent = ''; status.className = 'imdb-status'; }
+  const fetchBtn = document.getElementById('fetchIMDB');
+  if (fetchBtn) fetchBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Fetch from IMDB`;
   document.getElementById('editId').value    = item ? item.id : '';
   document.getElementById('modalTitle').textContent = item ? 'Edit Title' : 'Add Title';
   document.getElementById('f-title').value   = item?.title   || '';
