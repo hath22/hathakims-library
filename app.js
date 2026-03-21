@@ -148,6 +148,122 @@ async function initApp() {
 
 initApp();
 
+// ── Arwen fireworks ───────────────────────────────────────────────────────
+function fireArwenCelebration() {
+  const canvas = document.createElement('canvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:9999;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const COLORS = ['#f43f5e','#f59e0b','#22c55e','#7C3AED','#3b82f6','#ec4899','#06b6d4','#fbbf24','#a78bfa','#fb7185'];
+
+  class Firework {
+    constructor(delay) {
+      this.delay    = delay;
+      this.x        = 80 + Math.random() * (canvas.width - 160);
+      this.startY   = canvas.height + 10;
+      this.targetY  = canvas.height * (0.1 + Math.random() * 0.45);
+      this.y        = this.startY;
+      this.color    = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.speed    = canvas.height * 0.018;
+      this.launched = false;
+      this.exploded = false;
+      this.done     = false;
+      this.particles = [];
+    }
+
+    launch(elapsed) {
+      if (!this.launched) { this.launched = true; this.launchTime = elapsed; }
+      const travelTime = ((this.startY - this.targetY) / this.speed) * 16;
+      const t = Math.min(1, (elapsed - this.launchTime) / travelTime);
+      this.y = this.startY + (this.targetY - this.startY) * t;
+      // Trail
+      ctx.save();
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      if (t >= 1) this.explode();
+    }
+
+    explode() {
+      this.exploded = true;
+      const count = 70 + Math.floor(Math.random() * 40);
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        const speed = 1.5 + Math.random() * 6;
+        const isRect = Math.random() < 0.45;
+        this.particles.push({
+          x: this.x, y: this.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color: Math.random() < 0.6 ? this.color : COLORS[Math.floor(Math.random() * COLORS.length)],
+          opacity: 1,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.18,
+          isRect,
+          w: isRect ? 4 + Math.random() * 7 : 0,
+          h: isRect ? 3 + Math.random() * 4 : 0,
+          r: isRect ? 0 : 2 + Math.random() * 2.5,
+        });
+      }
+    }
+
+    updateParticles() {
+      let alive = false;
+      this.particles.forEach(p => {
+        p.vy      += 0.09;
+        p.vx      *= 0.98;
+        p.x       += p.vx;
+        p.y       += p.vy;
+        p.rotation += p.rotSpeed;
+        p.opacity -= 0.014;
+        if (p.opacity <= 0) return;
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        if (p.isRect) {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+      if (!alive) this.done = true;
+    }
+  }
+
+  const fireworks = Array.from({ length: 7 }, (_, i) =>
+    new Firework(i * 380 + Math.random() * 120));
+  let startTime = null;
+
+  function animate(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed = ts - startTime;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let anyAlive = false;
+    fireworks.forEach(fw => {
+      if (fw.done) return;
+      if (elapsed < fw.delay) { anyAlive = true; return; }
+      anyAlive = true;
+      if (!fw.exploded) fw.launch(elapsed);
+      else fw.updateParticles();
+    });
+    if (anyAlive) requestAnimationFrame(animate);
+    else canvas.remove();
+  }
+  requestAnimationFrame(animate);
+}
+
 // ── Genre list ────────────────────────────────────────────────────────────
 function buildGenreFilter() {
   const genres = new Set();
@@ -858,6 +974,7 @@ document.querySelectorAll('.nav-btn[data-filter-type]').forEach(btn => {
     document.querySelectorAll('.nav-btn[data-filter-type]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('listsPageBtn').classList.remove('active');
+    if (activeType === 'arwen') fireArwenCelebration();
     if (document.body.dataset.page !== 'library') switchPage('library');
     else render();
   });
