@@ -552,7 +552,8 @@ function openModal(item = null) {
   document.getElementById('f-rating').value  = item?.rating  || '';
   document.getElementById('f-creator').value = item?.creator || '';
   document.getElementById('f-notes').value   = item?.notes   || '';
-  document.getElementById('f-poster').value  = item?.poster  || '';
+  document.getElementById('f-poster').value    = item?.poster    || '';
+  document.getElementById('f-language').value  = item?.language  || '';
   document.getElementById('modalSyncIMDB').style.display = item ? '' : 'none';
   document.getElementById('modal').style.display = 'flex';
   document.getElementById('f-title').focus();
@@ -571,14 +572,15 @@ document.getElementById('addForm').addEventListener('submit', e => {
   e.preventDefault();
   const editId = document.getElementById('editId').value;
   const data = {
-    title:   document.getElementById('f-title').value.trim(),
-    type:    document.getElementById('f-type').value,
-    year:    parseInt(document.getElementById('f-year').value) || null,
-    genre:   document.getElementById('f-genre').value.trim(),
-    rating:  parseFloat(document.getElementById('f-rating').value) || null,
-    creator: document.getElementById('f-creator').value.trim(),
-    notes:   document.getElementById('f-notes').value.trim(),
-    poster:  document.getElementById('f-poster').value.trim(),
+    title:    document.getElementById('f-title').value.trim(),
+    type:     document.getElementById('f-type').value,
+    year:     parseInt(document.getElementById('f-year').value) || null,
+    genre:    document.getElementById('f-genre').value.trim(),
+    rating:   parseFloat(document.getElementById('f-rating').value) || null,
+    creator:  document.getElementById('f-creator').value.trim(),
+    notes:    document.getElementById('f-notes').value.trim(),
+    poster:   document.getElementById('f-poster').value.trim(),
+    language: document.getElementById('f-language').value.trim() || null,
   };
 
   if (editId) {
@@ -1003,13 +1005,14 @@ async function fillFromIMDBId(imdbId, statusEl) {
     return;
   }
   const fields = omdbToFields(data);
-  if (fields.title)   document.getElementById('f-title').value   = fields.title;
-  if (fields.year)    document.getElementById('f-year').value    = fields.year;
-  if (fields.genre)   document.getElementById('f-genre').value   = fields.genre;
-  if (fields.rating)  document.getElementById('f-rating').value  = fields.rating;
-  if (fields.creator) document.getElementById('f-creator').value = fields.creator;
-  if (fields.poster)  document.getElementById('f-poster').value  = fields.poster;
-  if (fields.type)    document.getElementById('f-type').value    = fields.type;
+  if (fields.title)    document.getElementById('f-title').value    = fields.title;
+  if (fields.year)     document.getElementById('f-year').value     = fields.year;
+  if (fields.genre)    document.getElementById('f-genre').value    = fields.genre;
+  if (fields.rating)   document.getElementById('f-rating').value   = fields.rating;
+  if (fields.creator)  document.getElementById('f-creator').value  = fields.creator;
+  if (fields.poster)   document.getElementById('f-poster').value   = fields.poster;
+  if (fields.type)     document.getElementById('f-type').value     = fields.type;
+  document.getElementById('f-language').value = fields.language || '';
   statusEl.textContent = '✓ Filled from IMDB';
   statusEl.className = 'imdb-status success';
 }
