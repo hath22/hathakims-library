@@ -848,6 +848,15 @@ main {
   border-color: #f43f5e;
   color: #f43f5e;
 }
+.detail-action-btn.btn-danger {
+  color: #f43f5e;
+  border-color: rgba(244,63,94,0.35);
+}
+.detail-action-btn.btn-danger:hover {
+  background: rgba(244,63,94,0.12);
+  border-color: #f43f5e;
+  color: #f43f5e;
+}
 
 .detail-lists-section {
   margin-top: 20px;
