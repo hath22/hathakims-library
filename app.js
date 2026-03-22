@@ -207,16 +207,6 @@ function primaryGenre(item) {
 }
 
 function buildGenreFilter() {
-  // Populate dropdown with all genres (any position)
-  const genres = new Set();
-  library.forEach(item => {
-    (item.genre || '').split(',').map(g => g.trim()).filter(Boolean).forEach(g => genres.add(g));
-  });
-  const sel = document.getElementById('filterGenre');
-  const current = sel.value;
-  sel.innerHTML = '<option value="">All Genres</option>' +
-    [...genres].sort().map(g => `<option value="${g}"${g === current ? ' selected' : ''}>${g}</option>`).join('');
-
   // Build genre tag row from primary (first) genre only
   const visibleItems = activeType === 'all' ? library : library.filter(i => i.type === activeType);
   const counts = {};
@@ -241,8 +231,6 @@ function buildGenreFilter() {
 
 function setGenreTag(g) {
   filterGenre = g;
-  const sel = document.getElementById('filterGenre');
-  if (sel) sel.value = g;
   render();
 }
 
@@ -420,7 +408,6 @@ function render(animateCards = false) {
 function renderFilterTags() {
   const c = document.getElementById('activeFilters');
   const tags = [];
-  if (filterGenre)  tags.push({ label: filterGenre,               key: 'genre'  });
   if (filterRating) tags.push({ label: `${filterRating}+ rating`, key: 'rating' });
   if (searchQuery)  tags.push({ label: `"${searchQuery}"`,         key: 'search' });
 
@@ -430,7 +417,6 @@ function renderFilterTags() {
 }
 
 function clearTag(key) {
-  if (key === 'genre')  { filterGenre  = ''; document.getElementById('filterGenre').value  = ''; }
   if (key === 'rating') { filterRating = ''; document.getElementById('filterRating').value = ''; }
   if (key === 'search') { searchQuery  = ''; document.getElementById('searchInput').value  = ''; document.getElementById('clearSearch').style.display = 'none'; }
   render();
@@ -440,7 +426,6 @@ function resetFilters() {
   searchQuery = filterGenre = filterRating = '';
   activeType = 'all';
   document.getElementById('searchInput').value  = '';
-  document.getElementById('filterGenre').value  = '';
   document.getElementById('filterRating').value = '';
   document.getElementById('clearSearch').style.display = 'none';
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.filterType === 'all'));
@@ -933,7 +918,6 @@ clearSearch.addEventListener('click', () => {
 });
 
 // Filters
-document.getElementById('filterGenre').addEventListener('change',  e => { filterGenre  = e.target.value; render(); });
 document.getElementById('filterRating').addEventListener('change', e => { filterRating = e.target.value; render(); });
 document.getElementById('sortBy').addEventListener('change',       e => { sortBy       = e.target.value; render(); });
 
