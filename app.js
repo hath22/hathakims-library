@@ -96,11 +96,12 @@ let lists         = [];
 let listsNextId   = 1;
 let currentListId = null;
 
-let activeType   = 'all';
-let searchQuery  = '';
-let filterGenre  = '';
-let filterRating = '';
-let sortBy       = 'dateAdded';
+let activeType    = 'all';
+let searchQuery   = '';
+let filterGenre   = '';
+let filterForeign = false;
+let filterRating  = '';
+let sortBy        = 'dateAdded';
 
 // ── Persist ───────────────────────────────────────────────────────────────
 async function save() {
@@ -223,14 +224,30 @@ function buildGenreFilter() {
   if (!wrap) return;
   if (sorted.length === 0) { wrap.innerHTML = ''; return; }
 
-  wrap.innerHTML = ['All', ...sorted].map(g => {
-    const active = g === 'All' ? !filterGenre : filterGenre === g;
-    return `<button class="genre-tag${active ? ' active' : ''}" onclick="setGenreTag(${g === 'All' ? "''" : `'${g}'`})">${g}</button>`;
+  const foreignCount = visibleItems.filter(i => i.language).length;
+  const allActive     = !filterGenre && !filterForeign;
+
+  let html = `<button class="genre-tag${allActive ? ' active' : ''}" onclick="setGenreTag('')">All</button>`;
+  if (foreignCount > 0) {
+    html += `<button class="genre-tag genre-tag--foreign${filterForeign ? ' active' : ''}" onclick="toggleForeignTag()">🌍 Foreign Language</button>`;
+  }
+  html += sorted.map(g => {
+    const active = filterGenre === g;
+    return `<button class="genre-tag${active ? ' active' : ''}" onclick="setGenreTag('${g}')">${g}</button>`;
   }).join('');
+
+  wrap.innerHTML = html;
 }
 
 function setGenreTag(g) {
-  filterGenre = g;
+  filterGenre   = g;
+  filterForeign = false;
+  render();
+}
+
+function toggleForeignTag() {
+  filterForeign = !filterForeign;
+  filterGenre   = '';
   render();
 }
 
@@ -354,8 +371,9 @@ function render(animateCards = false) {
   }
 
   // Filters
-  if (filterGenre)  items = items.filter(i => primaryGenre(i) === filterGenre);
-  if (filterRating) items = items.filter(i => i.rating >= +filterRating);
+  if (filterGenre)   items = items.filter(i => primaryGenre(i) === filterGenre);
+  if (filterForeign) items = items.filter(i => !!i.language);
+  if (filterRating)  items = items.filter(i => i.rating >= +filterRating);
 
   // Sort
   items.sort((a, b) => {
@@ -424,6 +442,7 @@ function clearTag(key) {
 
 function resetFilters() {
   searchQuery = filterGenre = filterRating = '';
+  filterForeign = false;
   activeType = 'all';
   document.getElementById('searchInput').value  = '';
   document.getElementById('filterRating').value = '';
