@@ -202,7 +202,12 @@ function fireArwenCelebration() {
 }
 
 // ── Genre list ────────────────────────────────────────────────────────────
+function primaryGenre(item) {
+  return (item.genre || '').split(',')[0].trim();
+}
+
 function buildGenreFilter() {
+  // Populate dropdown with all genres (any position)
   const genres = new Set();
   library.forEach(item => {
     (item.genre || '').split(',').map(g => g.trim()).filter(Boolean).forEach(g => genres.add(g));
@@ -211,6 +216,34 @@ function buildGenreFilter() {
   const current = sel.value;
   sel.innerHTML = '<option value="">All Genres</option>' +
     [...genres].sort().map(g => `<option value="${g}"${g === current ? ' selected' : ''}>${g}</option>`).join('');
+
+  // Build genre tag row from primary (first) genre only
+  const visibleItems = activeType === 'all' ? library : library.filter(i => i.type === activeType);
+  const counts = {};
+  visibleItems.forEach(item => {
+    const g = primaryGenre(item);
+    if (g) counts[g] = (counts[g] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([g]) => g);
+
+  const wrap = document.getElementById('genreTags');
+  if (!wrap) return;
+  if (sorted.length === 0) { wrap.innerHTML = ''; return; }
+
+  wrap.innerHTML = ['All', ...sorted].map(g => {
+    const active = g === 'All' ? !filterGenre : filterGenre === g;
+    return `<button class="genre-tag${active ? ' active' : ''}" onclick="setGenreTag(${g === 'All' ? "''" : `'${g}'`})">${g}</button>`;
+  }).join('');
+}
+
+function setGenreTag(g) {
+  filterGenre = g;
+  const sel = document.getElementById('filterGenre');
+  if (sel) sel.value = g;
+  render();
 }
 
 // ── Poster gradient ───────────────────────────────────────────────────────
@@ -333,7 +366,7 @@ function render(animateCards = false) {
   }
 
   // Filters
-  if (filterGenre)  items = items.filter(i => (i.genre || '').split(',').map(g => g.trim()).includes(filterGenre));
+  if (filterGenre)  items = items.filter(i => primaryGenre(i) === filterGenre);
   if (filterRating) items = items.filter(i => i.rating >= +filterRating);
 
   // Sort

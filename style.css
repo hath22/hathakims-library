@@ -244,6 +244,37 @@ main {
 .filters select:focus { border-color: var(--accent); }
 .filters select option { background: var(--surface2); }
 
+/* ── Genre tag row ───────────────────────────────────────── */
+.genre-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 4px;
+}
+
+.genre-tag {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.genre-tag:hover {
+  border-color: var(--accent);
+  color: var(--accent-l);
+}
+
+.genre-tag.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ── Active filters ──────────────────────────────────────── */
 .active-filters {
   display: flex;
