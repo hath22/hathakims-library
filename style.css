@@ -166,7 +166,7 @@ main {
   min-width: 90px;
 }
 .stat span { font-size: 1.6rem; font-weight: 700; line-height: 1; }
-.stat label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+.stat label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; text-align: center; }
 
 /* ── Controls ────────────────────────────────────────────── */
 .controls {
