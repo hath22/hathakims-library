@@ -171,9 +171,14 @@ main {
 /* ── Controls ────────────────────────────────────────────── */
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 12px;
+}
+
+.controls-top {
+  display: flex;
+  gap: 12px;
   align-items: center;
 }
 
@@ -1252,7 +1257,7 @@ main {
   .stats-bar { gap: 8px; }
   .stat { padding: 10px 12px; min-width: 70px; }
   .stat span { font-size: 1.2rem; }
-  .controls { flex-direction: column; }
+  .controls-top { flex-direction: column; }
   .search-wrap { min-width: 100%; }
   .filters { width: 100%; }
   .filters select { flex: 1; }

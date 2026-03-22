@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hathakims Library</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="style.css?v=11" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
 <body data-page="library">
 
@@ -42,32 +42,32 @@
     <section class="stats-bar" id="statsBar"></section>
 
     <section class="controls">
-      <div class="search-wrap">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="6.5" cy="6.5" r="4.5" stroke="#888" stroke-width="1.5"/>
-          <path d="M10 10l3.5 3.5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <input type="text" id="searchInput" placeholder="Search titles, genres, cast…" />
-        <button class="clear-search" id="clearSearch" style="display:none">✕</button>
+      <div class="controls-top">
+        <div class="search-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="6.5" cy="6.5" r="4.5" stroke="#888" stroke-width="1.5"/>
+            <path d="M10 10l3.5 3.5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search titles, genres, cast…" />
+          <button class="clear-search" id="clearSearch" style="display:none">✕</button>
+        </div>
+        <div class="filters">
+          <select id="filterRating">
+            <option value="">Any IMDB Rating</option>
+            <option value="9">9+</option>
+            <option value="8">8+</option>
+            <option value="7">7+</option>
+            <option value="6">6+</option>
+          </select>
+          <select id="sortBy">
+            <option value="dateAdded">Date Added</option>
+            <option value="title">Title A–Z</option>
+            <option value="year">Year</option>
+            <option value="rating">Rating</option>
+          </select>
+        </div>
       </div>
-
       <div id="genreTags" class="genre-tags"></div>
-
-      <div class="filters">
-<select id="filterRating">
-          <option value="">Any IMDB Rating</option>
-          <option value="9">9+</option>
-          <option value="8">8+</option>
-          <option value="7">7+</option>
-          <option value="6">6+</option>
-        </select>
-        <select id="sortBy">
-          <option value="dateAdded">Date Added</option>
-          <option value="title">Title A–Z</option>
-          <option value="year">Year</option>
-          <option value="rating">Rating</option>
-        </select>
-      </div>
     </section>
 
     <div id="activeFilters" class="active-filters"></div>
@@ -196,6 +196,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="data.js?v=5"></script>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
 </body>
 </html>
