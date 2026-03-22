@@ -70,7 +70,7 @@ const LANG_FLAGS = {
 function langFlag(lang) {
   if (!lang) return '';
   const code = LANG_FLAGS[lang.toLowerCase()];
-  return code ? `<span class="lang-flag fi fi-${code}" title="${escHtml(lang)}"></span>` : '';
+  return code ? `<img class="lang-flag" src="https://flagcdn.com/w40/${code}.png" title="${escHtml(lang)}" alt="${escHtml(lang)}" />` : '';
 }
 
 function showToast(msg, isError = false) {

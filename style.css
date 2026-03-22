@@ -398,11 +398,12 @@ main {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 22px !important;
-  height: 16px !important;
+  width: 24px;
+  height: auto;
   border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.5);
+  box-shadow: 0 1px 3px rgba(0,0,0,.6);
   pointer-events: none;
+  display: block;
 }
 
 .card-body {
