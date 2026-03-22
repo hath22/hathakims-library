@@ -339,9 +339,8 @@ main {
 }
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.5);
-  border-color: #3a3a50;
-  border-color: #3a3a50;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5), 0 0 18px 4px rgba(124,58,237,0.18);
+  border-color: rgba(124,58,237,0.45);
 }
 
 .card-poster {
