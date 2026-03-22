@@ -457,7 +457,7 @@ function renderDetailContent(id) {
         <div class="detail-action-row">
           <button class="detail-action-btn${isWatched ? ' active' : ''}" onclick="detailToggleWatched(${id})">
             <svg viewBox="0 0 20 20" width="16" height="16" fill="${isWatched ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M5 10l4 4 6-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            ${isWatched ? 'Watched' : 'Mark Watched'}
+            ${isWatched ? 'Watched' : 'Unwatched'}
           </button>
           <button class="detail-action-btn${isHearted ? ' hearted' : ''}" onclick="detailToggleHeart(${id})">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="${isHearted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21C12 21 3 14 3 8.5A5 5 0 0 1 12 6a5 5 0 0 1 9 2.5C21 14 12 21 12 21z"/></svg>
