@@ -398,8 +398,8 @@ main {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 24px;
-  height: auto;
+  width: 28px !important;
+  height: 19px !important;
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0,0,0,.6);
   pointer-events: none;
