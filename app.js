@@ -672,6 +672,7 @@ function switchPage(page, listId = null) {
       b.classList.toggle('active', b.dataset.filterType === activeType));
   }
   closeAllPopovers();
+  if (page === 'library')     render();
   if (page === 'lists')       renderListsPage();
   if (page === 'list-detail') renderListDetail(listId);
 }
