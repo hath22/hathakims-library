@@ -59,18 +59,18 @@ function omdbToFields(data) {
 }
 
 const LANG_FLAGS = {
-  'french':'🇫🇷','spanish':'🇪🇸','german':'🇩🇪','italian':'🇮🇹',
-  'japanese':'🇯🇵','korean':'🇰🇷','mandarin':'🇨🇳','cantonese':'🇨🇳','chinese':'🇨🇳',
-  'portuguese':'🇵🇹','russian':'🇷🇺','arabic':'🇸🇦','hindi':'🇮🇳',
-  'swedish':'🇸🇪','danish':'🇩🇰','norwegian':'🇳🇴','finnish':'🇫🇮','dutch':'🇳🇱',
-  'polish':'🇵🇱','turkish':'🇹🇷','hebrew':'🇮🇱','thai':'🇹🇭','vietnamese':'🇻🇳',
-  'romanian':'🇷🇴','czech':'🇨🇿','greek':'🇬🇷','hungarian':'🇭🇺','ukrainian':'🇺🇦',
-  'farsi':'🇮🇷','persian':'🇮🇷','tagalog':'🇵🇭','indonesian':'🇮🇩','malay':'🇲🇾',
+  'french':'fr','spanish':'es','german':'de','italian':'it',
+  'japanese':'jp','korean':'kr','mandarin':'cn','cantonese':'cn','chinese':'cn',
+  'portuguese':'pt','russian':'ru','arabic':'sa','hindi':'in',
+  'swedish':'se','danish':'dk','norwegian':'no','finnish':'fi','dutch':'nl',
+  'polish':'pl','turkish':'tr','hebrew':'il','thai':'th','vietnamese':'vn',
+  'romanian':'ro','czech':'cz','greek':'gr','hungarian':'hu','ukrainian':'ua',
+  'farsi':'ir','persian':'ir','tagalog':'ph','indonesian':'id','malay':'my',
 };
 function langFlag(lang) {
   if (!lang) return '';
-  const flag = LANG_FLAGS[lang.toLowerCase()];
-  return flag ? `<span class="lang-flag" title="${escHtml(lang)}">${flag}</span>` : '';
+  const code = LANG_FLAGS[lang.toLowerCase()];
+  return code ? `<span class="lang-flag fi fi-${code}" title="${escHtml(lang)}"></span>` : '';
 }
 
 function showToast(msg, isError = false) {
