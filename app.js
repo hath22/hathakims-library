@@ -101,7 +101,7 @@ let searchQuery   = '';
 let filterGenre   = '';
 let filterForeign = false;
 let filterRating  = '';
-let sortBy        = 'dateAdded';
+let sortBy        = 'title';
 
 // ── Persist ───────────────────────────────────────────────────────────────
 async function save() {
