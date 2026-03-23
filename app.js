@@ -407,7 +407,7 @@ function render(animateCards = false) {
 
     if (animateCards) {
       grid.querySelectorAll('.card').forEach((card, i) => {
-        card.style.animationDelay = `${i * 30}ms`;
+        card.style.animationDelay = `${Math.min(i * 18, 220)}ms`;
         card.classList.add('card--entering');
       });
     }
@@ -672,7 +672,7 @@ function switchPage(page, listId = null) {
       b.classList.toggle('active', b.dataset.filterType === activeType));
   }
   closeAllPopovers();
-  if (page === 'library')     render();
+  if (page === 'library')     render(true);
   if (page === 'lists')       renderListsPage();
   if (page === 'list-detail') renderListDetail(listId);
 }
@@ -952,7 +952,7 @@ document.querySelectorAll('.nav-btn[data-filter-type]').forEach(btn => {
     document.getElementById('listsPageBtn').classList.remove('active');
     if (activeType === 'arwen') fireArwenCelebration();
     if (document.body.dataset.page !== 'library') switchPage('library');
-    else render();
+    else render(true);
   });
 });
 
