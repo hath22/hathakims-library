@@ -98,8 +98,9 @@ let currentListId = null;
 
 let activeType    = 'all';
 let searchQuery   = '';
-let filterGenre   = '';
-let filterForeign = false;
+let filterGenre      = '';
+let filterForeign    = false;
+let filterFavourites = false;
 let filterRating  = '';
 let sortBy        = 'title';
 
@@ -225,9 +226,13 @@ function buildGenreFilter() {
   if (sorted.length === 0) { wrap.innerHTML = ''; return; }
 
   const foreignCount = visibleItems.filter(i => i.language).length;
-  const allActive     = !filterGenre && !filterForeign;
+  const allActive      = !filterGenre && !filterForeign && !filterFavourites;
+  const favouriteCount = visibleItems.filter(i => i.hearted).length;
 
   let html = `<button class="genre-tag${allActive ? ' active' : ''}" onclick="setGenreTag('')">All</button>`;
+  if (favouriteCount > 0) {
+    html += `<button class="genre-tag genre-tag--favourites${filterFavourites ? ' active' : ''}" onclick="toggleFavouritesTag()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> Favourites</button>`;
+  }
   if (foreignCount > 0) {
     html += `<button class="genre-tag genre-tag--foreign${filterForeign ? ' active' : ''}" onclick="toggleForeignTag()">🌍 Foreign Language</button>`;
   }
@@ -240,14 +245,23 @@ function buildGenreFilter() {
 }
 
 function setGenreTag(g) {
-  filterGenre   = g;
-  filterForeign = false;
+  filterGenre      = g;
+  filterForeign    = false;
+  filterFavourites = false;
   render();
 }
 
 function toggleForeignTag() {
-  filterForeign = !filterForeign;
-  filterGenre   = '';
+  filterForeign    = !filterForeign;
+  filterGenre      = '';
+  filterFavourites = false;
+  render();
+}
+
+function toggleFavouritesTag() {
+  filterFavourites = !filterFavourites;
+  filterGenre      = '';
+  filterForeign    = false;
   render();
 }
 
@@ -371,8 +385,9 @@ function render(animateCards = false) {
   }
 
   // Filters
-  if (filterGenre)   items = items.filter(i => primaryGenre(i) === filterGenre);
-  if (filterForeign) items = items.filter(i => !!i.language);
+  if (filterGenre)      items = items.filter(i => primaryGenre(i) === filterGenre);
+  if (filterForeign)    items = items.filter(i => !!i.language);
+  if (filterFavourites) items = items.filter(i => !!i.hearted);
   if (filterRating)  items = items.filter(i => i.rating >= +filterRating);
 
   // Sort
@@ -451,6 +466,7 @@ function clearTag(key) {
 function resetFilters() {
   searchQuery = filterGenre = filterRating = '';
   filterForeign = false;
+  filterFavourites = false;
   activeType = 'all';
   document.getElementById('searchInput').value  = '';
   document.getElementById('filterRating').value = '';

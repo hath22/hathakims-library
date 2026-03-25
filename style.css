@@ -280,6 +280,25 @@ main {
   color: #fff;
 }
 
+.genre-tag--favourites {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-color: rgba(244,63,94,0.4);
+  color: #f43f5e;
+}
+
+.genre-tag--favourites:hover {
+  border-color: #f43f5e;
+  color: #f43f5e;
+}
+
+.genre-tag--favourites.active {
+  background: #f43f5e;
+  border-color: #f43f5e;
+  color: #fff;
+}
+
 /* ── Active filters ──────────────────────────────────────── */
 .active-filters {
   display: flex;
