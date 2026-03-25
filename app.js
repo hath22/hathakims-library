@@ -550,7 +550,7 @@ function openModal(item = null) {
   document.getElementById('editId').value    = item ? item.id : '';
   document.getElementById('modalTitle').textContent = item ? 'Edit Title' : 'Add Title';
   document.getElementById('f-title').value   = item?.title   || '';
-  document.getElementById('f-type').value    = item?.type    || 'movie';
+  document.getElementById('f-type').value    = item?.type    || (activeType === 'arwen' ? 'arwen' : 'movie');
   document.getElementById('f-year').value    = item?.year    || '';
   document.getElementById('f-genre').value   = item?.genre   || '';
   document.getElementById('f-rating').value  = item?.rating  || '';
@@ -1016,7 +1016,7 @@ async function fillFromIMDBId(imdbId, statusEl) {
   if (fields.rating)   document.getElementById('f-rating').value   = fields.rating;
   if (fields.creator)  document.getElementById('f-creator').value  = fields.creator;
   if (fields.poster)   document.getElementById('f-poster').value   = fields.poster;
-  if (fields.type)     document.getElementById('f-type').value     = fields.type;
+  if (fields.type && document.getElementById('f-type').value !== 'arwen') document.getElementById('f-type').value = fields.type;
   document.getElementById('f-language').value = fields.language || '';
   statusEl.textContent = '✓ Filled from IMDB';
   statusEl.className = 'imdb-status success';
