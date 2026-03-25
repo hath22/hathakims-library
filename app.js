@@ -409,6 +409,10 @@ function render(animateCards = false) {
       grid.querySelectorAll('.card').forEach((card, i) => {
         card.style.animationDelay = `${Math.min(i * 18, 220)}ms`;
         card.classList.add('card--entering');
+        card.addEventListener('animationend', () => {
+          card.classList.remove('card--entering');
+          card.style.animationDelay = '';
+        }, { once: true });
       });
     }
   }
