@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <!-- Background -->
+  <rect width="180" height="180" rx="36" fill="#7C3AED"/>
+  <!-- Subtle gradient overlay -->
+  <rect width="180" height="180" rx="36" fill="url(#grad)" opacity="0.4"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+  <!-- "MOVIE" text -->
+  <text x="90" y="88" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="38" font-weight="800" fill="white"
+        text-anchor="middle" letter-spacing="2">MOVIE</text>
+  <!-- Divider line -->
+  <rect x="30" y="97" width="120" height="2" rx="1" fill="rgba(255,255,255,0.35)"/>
+  <!-- "HD" text -->
+  <text x="90" y="132" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="30" font-weight="300" fill="rgba(255,255,255,0.9)"
+        text-anchor="middle" letter-spacing="6">HD</text>
+</svg>
