@@ -391,15 +391,19 @@ function render(animateCards = false) {
     empty.style.display = 'flex';
   } else {
     empty.style.display = 'none';
-    const unwatched = items.filter(i => i.status !== 'watched');
-    const watched   = items.filter(i => i.status === 'watched');
+    const unwatched   = items.filter(i => i.status !== 'watched');
+    const favourites  = items.filter(i => i.status === 'watched' && i.hearted);
+    const watched     = items.filter(i => i.status === 'watched' && !i.hearted);
 
     let html = unwatched.map(cardHTML).join('');
 
+    if (favourites.length > 0) {
+      html += `<div class="watched-divider favourites-divider"><span>♥ Favourites</span></div>`;
+      html += favourites.map(cardHTML).join('');
+    }
+
     if (watched.length > 0) {
-      if (unwatched.length > 0) {
-        html += `<div class="watched-divider"><span>Watched</span></div>`;
-      }
+      html += `<div class="watched-divider"><span>Watched</span></div>`;
       html += watched.map(cardHTML).join('');
     }
 

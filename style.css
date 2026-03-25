@@ -505,12 +505,18 @@ main {
 /* ── Card heart indicator (passive) ──────────────────────── */
 .card-heart-indicator {
   position: absolute;
-  bottom: 8px; right: 8px;
+  bottom: 8px; left: 8px;
   z-index: 3;
-  font-size: 14px;
+  font-size: 16px;
   color: #f43f5e;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 0 8px rgba(244,63,94,0.9), 0 0 16px rgba(244,63,94,0.5);
   pointer-events: none;
+  animation: heartPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes heartPulse {
+  0%, 100% { text-shadow: 0 0 8px rgba(244,63,94,0.9), 0 0 16px rgba(244,63,94,0.5); }
+  50%       { text-shadow: 0 0 12px rgba(244,63,94,1),  0 0 28px rgba(244,63,94,0.8); }
 }
 
 /* ── Watched divider ─────────────────────────────────────── */
@@ -537,6 +543,15 @@ main {
   letter-spacing: 1px;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.favourites-divider::before,
+.favourites-divider::after {
+  background: rgba(244,63,94,0.3);
+}
+
+.favourites-divider span {
+  color: #f43f5e;
 }
 
 
