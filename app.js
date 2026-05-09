@@ -498,6 +498,8 @@ function renderDetailContent(id) {
       <span>${escHtml(l.name)}</span>
     </label>`).join('') : `<span class="detail-no-lists">No lists yet</span>`;
 
+  const trailerUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${item.title} ${item.year || ''} trailer`.trim())}`;
+
   document.getElementById('detailContent').innerHTML = `
     <div class="detail-layout">
       <div class="detail-poster">${poster}</div>
@@ -520,6 +522,10 @@ function renderDetailContent(id) {
             <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13.5V16h2.5l7-7-2.5-2.5-7 7zM14.5 5.5l-2.5 2.5 2.5 2.5 2.5-2.5-2.5-2.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Edit
           </button>
+          <a class="detail-action-btn" href="${trailerUrl}" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+            Trailer
+          </a>
           <button class="detail-action-btn${isWatched ? ' active' : ''}" onclick="detailToggleWatched(${id})">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="6"/><circle cx="12" cy="12" r="3"/></svg>
             ${isWatched ? 'Undo Watch' : 'Watch'}
